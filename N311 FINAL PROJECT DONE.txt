@@ -1,0 +1,663 @@
+--1.1
+SET SERVEROUTPUT ON;
+DECLARE
+     CURSOR get_sth IS
+          SELECT * FROM CREDIT_CARD;
+     sth       get_sth%ROWTYPE;
+     v_counter NUMBER;
+BEGIN
+     OPEN get_sth;
+     LOOP
+          FETCH get_sth
+               INTO sth;
+          EXIT WHEN get_sth%NOTFOUND;
+     END LOOP;
+     v_counter := get_sth%ROWCOUNT;
+     dbms_output.put_line('Lines Of Credit Available:'||v_counter);
+     CLOSE get_sth;
+END;
+/
+
+
+
+
+
+
+
+
+
+
+
+
+--1.2
+DROP TABLE Loan_Interest;
+CREATE TABLE Loan_Interest
+(
+	LOAN_ID int,
+	LOAN_AMOUNT int,
+	LOAN_INTEREST_RATE float,
+	LOAN_INTEREST_ACCUMULATED number
+);
+
+DECLARE
+	aLoan NUMBER;
+	aLoan_Amt NUMBER;
+	aLoan_Rate FLOAT;
+	aLoan_Intrest NUMBER;
+
+	CURSOR Final_Q1_cur is
+    SELECT LOANID, AMOUNT
+    FROM LOAN;
+  
+BEGIN
+	OPEN Final_Q1_cur;
+	LOOP --uses loops
+  FETCH Final_Q1_cur INTO aLoan, aLoan_Amt;
+    IF aLoan_Amt < 9999 THEN
+      aLoan_Rate := 0.06;
+      aLoan_Intrest := aLoan_Amt * aLoan_Rate;
+        INSERT INTO Loan_Interest VALUES(aLoan, aLoan_Amt, aLoan_Rate, aLoan_Intrest);
+    ELSIF aLoan_Amt < 49999 THEN
+      aLoan_Rate := 0.05;
+      aLoan_Intrest := aLoan_Amt * aLoan_Rate;
+        INSERT INTO Loan_Interest VALUES(aLoan, aLoan_Amt, aLoan_Rate, aLoan_Intrest);
+    ELSIF aLoan_Amt < 99999 THEN
+      aLoan_Rate := 0.03;
+      aLoan_Intrest := aLoan_Amt * aLoan_Rate;
+        INSERT INTO Loan_Interest VALUES(aLoan, aLoan_Amt, aLoan_Rate, aLoan_Intrest);
+    ELSIF aLoan_Amt < 149999 THEN
+      aLoan_Rate := 0.02;
+      aLoan_Intrest := aLoan_Amt * aLoan_Rate;
+        INSERT INTO Loan_Interest VALUES(aLoan, aLoan_Amt, aLoan_Rate, aLoan_Intrest);
+    ELSE
+      aLoan_Rate := 0.01;
+      aLoan_Intrest := aLoan_Amt * aLoan_Rate;
+        INSERT INTO Loan_Interest VALUES(aLoan, aLoan_Amt, aLoan_Rate, aLoan_Intrest);
+  END IF;
+  EXIT WHEN Final_Q1_cur%NOTFOUND;
+	END LOOP;
+	CLOSE Final_Q1_cur;
+END;
+/
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------
+--2.1
+DROP TABLE CREDIT_CARD;
+CREATE TABLE CREDIT_CARD
+(
+CreditCardNumber number(16,0), CONSTRAINT CreditCardNumber CHECK (CreditCardNumber > 999999999999999),
+CreditCardLimit NUMBER(8,2), CHECK (CreditCardLimit >= 500),
+CustomerId int
+);
+
+Insert into CREDIT_CARD values (5536659067699681,'500',556);
+Insert into CREDIT_CARD values (5536659067699681,'1500',577);
+Insert into CREDIT_CARD values (5418598337016271,'10000',640);
+Insert into CREDIT_CARD values (5373320601169964,'50000',661);
+Insert into CREDIT_CARD values (6011254818112630,'6000',724);
+Insert into CREDIT_CARD values (6011405901450887,'900',745);
+Insert into CREDIT_CARD values (4556649532162538,'3300',808);
+Insert into CREDIT_CARD values (4532242334971949,'5500',829);
+Insert into CREDIT_CARD values (5184661953716038,'7500',892);
+Insert into CREDIT_CARD values (6011695623836062,'7450',913);
+Insert into CREDIT_CARD values (4556834587489073,'4625',577);
+Insert into CREDIT_CARD values (4556754781945177,'9000',640);
+Insert into CREDIT_CARD values (5223293107414360,'12000',661);
+Insert into CREDIT_CARD values (6011956844573649,'550',892);
+Insert into CREDIT_CARD values (5250335443644204,'15000',661);
+
+DROP TABLE TOP_FIVE_CREDIT_LIMITS;
+CREATE TABLE TOP_FIVE_CREDIT_LIMITS
+(
+  CREDITCARDLIMIT NUMBER(8,2),
+  CREDITCARDNUMBER NUMBER(16,0),
+  CUSTOMERID INT
+);
+
+SET SERVEROUTPUT ON;
+DECLARE
+   CURSOR Final_Q2_Cursor is
+   SELECT CREDITCARDNUMBER,CREDITCARDLIMIT,CUSTOMERID FROM CREDIT_CARD
+   ORDER BY CREDITCARDLIMIT DESC;   -- start with highest paid employee
+
+  aCardLimt NUMBER(8,2);
+  aCardNum NUMBER(16);
+  aCustId INT;
+  aCounter INT;
+  not_enough_values EXCEPTION;
+
+BEGIN
+   OPEN  Final_Q2_Cursor;
+   aCounter := 1;
+   FOR i IN 1..5 LOOP
+      FETCH Final_Q2_Cursor INTO aCardNum, aCardLimt, aCustId;
+      EXIT WHEN Final_Q2_Cursor%NOTFOUND; 
+      INSERT INTO TOP_FIVE_CREDIT_LIMITS VALUES (aCardLimt, aCardNum, aCustId);
+      aCounter := aCounter+1;
+   END LOOP;
+  IF aCounter < 5 THEN
+    raise not_enough_values;
+    END IF;
+   CLOSE Final_Q2_Cursor;
+EXCEPTION
+  WHEN not_enough_values THEN
+	dbms_output.put_line('Not Enough Data in Table');
+END;
+/
+SELECT * FROM TOP_FIVE_CREDIT_LIMITS;
+
+
+
+
+
+
+
+
+
+
+
+
+2.2 - Get the first and last names of all employees and thier emails
+DROP TABLE BANKER_INFO;
+CREATE TABLE BANKER_INFO
+(
+BankerID int PRIMARY KEY,
+BankerFirstName varchar(255),
+BankerLastName varchar (255),
+BankerEmail varchar(255),
+BankerBranchNumber smallint
+);
+create unique index BI$BankerFirstName on BANKER_INFO(BankerID, BankerFirstName);
+DROP SEQUENCE SeqBankerID;
+CREATE SEQUENCE SeqBankerID
+MINVALUE 5500
+START WITH 5500 
+INCREMENT BY 14;
+insert into BANKER_INFO values(SeqBankerID.nextval, 'Jerry' , 'Thomas', 'jthomas1@gmail.com', 10); 
+insert into BANKER_INFO values(SeqBankerID.nextval, 'Emanuel' , 'Kim', 'EKIM@hotmail.net',20);
+insert into BANKER_INFO values(SeqBankerID.nextval, 'Wilfred' , 'Nash', 'NashW@netscape.com',20);
+insert into BANKER_INFO values(SeqBankerID.nextval, 'Caleb' , 'Park', 'Cal_Par4454@comcast.net',20);
+insert into BANKER_INFO values(SeqBankerID.nextval, 'Toby' , 'Lucas', 'TLuke@gmail.com',10);
+
+
+DECLARE 
+	bankerFirst varchar(255);
+	bankerLast varchar(255);
+	bankerEmail varchar(255);
+  NO_EMPLOYEES EXCEPTION;
+   	CURSOR b_banker_stuff is 
+      		SELECT BankerFirstName, BANKERLASTNAME, BankerEmail FROM BANKER_INFO; 
+BEGIN 
+   OPEN b_banker_stuff; 
+   LOOP 
+   FETCH b_banker_stuff into bankerFirst, bankerLast, bankerEmail; 
+      EXIT WHEN b_banker_stuff%notfound; 
+      dbms_output.put_line('First: '||bankerFirst  || ', Last: ' || bankerLast || ', Email:'||bankerEmail); 
+   END LOOP; 
+   CLOSE b_banker_stuff;
+EXCEPTION
+   WHEN NO_DATA_FOUND THEN
+    dbms_output.put_line('There are no employees in the database'); 
+END; 
+/
+
+
+
+--------------------------------------------------------------------------
+3.1 Exception Handling in the Code(s)
+-There is exception handling in 2.1
+
+--Show the exception Handling
+DELETE FROM CREDIT_CARD;
+Insert into CREDIT_CARD values (6011956844573649,'550',892);
+Insert into CREDIT_CARD values (5250335443644204,'15000',661);
+
+DECLARE
+   CURSOR Final_Q2_Cursor is
+   SELECT CREDITCARDNUMBER,CREDITCARDLIMIT,CUSTOMERID FROM CREDIT_CARD
+   ORDER BY CREDITCARDLIMIT DESC;   -- start with highest paid employee
+
+  aCardLimt NUMBER(8,2);
+  aCardNum NUMBER(16);
+  aCustId INT;
+  aCounter INT;
+  not_enough_values EXCEPTION;
+
+BEGIN
+   OPEN  Final_Q2_Cursor;
+   aCounter := 1;
+   FOR i IN 1..5 LOOP
+      FETCH Final_Q2_Cursor INTO aCardNum, aCardLimt, aCustId;
+      EXIT WHEN Final_Q2_Cursor%NOTFOUND; 
+      INSERT INTO TOP_FIVE_CREDIT_LIMITS VALUES (aCardLimt, aCardNum, aCustId);
+      aCounter := aCounter+1;
+   END LOOP;
+  IF aCounter < 5 THEN
+    raise not_enough_values;
+    END IF;
+   CLOSE Final_Q2_Cursor;
+EXCEPTION
+  WHEN not_enough_values THEN
+	dbms_output.put_line('Not Enough Data in Table');
+END;
+/
+
+
+
+
+
+
+
+
+--SHOW EXCEPTION HANDLING
+DELETE FROM BANKER_INFO;
+
+DECLARE 
+	bankerFirst varchar(255);
+	bankerLast varchar(255);
+	bankerEmail varchar(255);
+  NO_DATA_FOUND EXCEPTION;
+   	CURSOR b_banker_stuff is 
+      		SELECT BankerFirstName, BANKERLASTNAME, BankerEmail FROM BANKER_INFO; 
+BEGIN 
+   OPEN b_banker_stuff; 
+   LOOP 
+   FETCH b_banker_stuff into bankerFirst, bankerLast, bankerEmail;
+   IF b_banker_stuff%notfound THEN
+    raise NO_DATA_FOUND;
+   ELSE
+      dbms_output.put_line('First: '||bankerFirst  || ', Last: ' || bankerLast || ', Email:'||bankerEmail);
+   END IF;
+   END LOOP; 
+   CLOSE b_banker_stuff;
+EXCEPTION
+   WHEN NO_DATA_FOUND THEN
+    dbms_output.put_line('There are no employees in the database'); 
+END; 
+/
+
+------------------------------------------------------
+--Triggers
+--4.1 
+
+DROP TABLE LOAN_STATUS;
+CREATE TABLE LOAN_STATUS
+( 
+LoanId int,
+Amount int,
+CustomerID int,
+BranchNo smallint,
+LoanStatus varchar(255),
+TimeOfOccurance varchar(255)
+);
+
+DROP TABLE LOAN;
+CREATE TABLE LOAN
+( 
+LoanId int,
+Amount int,
+CustomerID int,
+BranchNo smallint
+);
+DROP SEQUENCE SeqLoanNumber;
+CREATE SEQUENCE SeqLoanNumber
+MINVALUE 66458
+START WITH 66458
+INCREMENT BY 90;
+
+CREATE OR REPLACE trigger LOAN_AFT_UPDATE
+after insert on LOAN
+for each row
+BEGIN
+	insert into LOAN_STATUS
+	(LoanId, Amount, CustomerID, BranchNo, LoanStatus, TimeOfOccurance)
+	values
+	(:new.LoanId, :new.Amount, :new.CustomerId, :new.BranchNo, 'Loan Taken Out', sysdate);
+END;
+/
+
+
+insert into LOAN values (SeqLoanNumber.nextval, 10000, 535, 10);
+insert into LOAN values (SeqLoanNumber.nextval,2150 ,577, 10);
+insert into LOAN values (SeqLoanNumber.nextval,6645 ,619, 20);
+insert into LOAN values (SeqLoanNumber.nextval, 12000, 661,20 );
+insert into LOAN values (SeqLoanNumber.nextval, 900, 703, 20);
+insert into LOAN values (SeqLoanNumber.nextval, 150000, 745, 10);
+insert into LOAN values (SeqLoanNumber.nextval, 1550,787 , 10);
+insert into LOAN values (SeqLoanNumber.nextval, 250000, 829, 20);
+insert into LOAN values (SeqLoanNumber.nextval, 3550,871 , 20);
+insert into LOAN values (SeqLoanNumber.nextval, 60000, 913, 10);
+insert into LOAN values (SeqLoanNumber.nextval, 80500, 577, 10);
+insert into LOAN values (SeqLoanNumber.nextval, 76000, 619, 10);
+
+
+
+
+
+
+
+
+--4.2
+
+CREATE OR REPLACE trigger LOAN_AFT_DELETE
+after DELETE on LOAN
+for each row
+BEGIN
+	insert into LOAN_STATUS
+	(LoanId, Amount, CustomerID, BranchNo, LoanStatus, TimeOfOccurance)
+	values
+	(:old.LoanId, :old.Amount, :old.CustomerId, :old.BranchNo, 'Loan Paid Off', sysdate);
+END;
+/
+
+
+DELETE FROM LOAN;
+--View the table 
+--------------------------------------------------------------------------------
+--5.1
+CREATE OR REPLACE Function BranchCount
+(branch_name IN varchar2)
+RETURN NUMBER
+IS
+  cnumber number;
+
+  cursor c1 is
+  SELECT COUNT(BRANCHLOCATION)
+  FROM BRANCH
+  WHERE BRANCHLOCATION = branch_name;
+
+BEGIN
+  open c1;
+  fetch c1 into cnumber;
+  
+  if c1%notfound then
+    cnumber := 0;
+  end if;
+
+  close c1;
+
+RETURN cnumber;
+END;
+/
+select BRANCHCOUNT('Fishers') from dual;
+select branchcount('Noblesville') from dual;
+
+
+
+
+
+
+
+
+
+
+
+--5.2
+CREATE OR REPLACE FUNCTION EmailMaker (name_in varchar2)
+return VARCHAR2
+IS
+generatedEmail VARCHAR2(255);
+
+begin
+generatedEmail := SUBSTR(name_in, 1,1)||substr(name_in, - instr((name_in), ' ') -1)||'@CoreysBank.net';
+RETURN generatedEmail;
+END;
+/
+select EmailMaker('Bob Frank') from dual;
+--------------------------------------------------------------------------
+--6.1
+
+SET SERVEROUTPUT ON;
+CREATE OR REPLACE PROCEDURE BusiestBank (name_in IN VARCHAR2) IS
+   busyBank VARCHAR(50);
+
+   CURSOR busy_bank_cursor IS
+   SELECT ASSETS FROM BRANCH
+   WHERE BRANCHLOCATION = name_in;
+
+BEGIN
+   OPEN busy_bank_cursor;
+   FETCH busy_bank_cursor INTO busyBank;
+   DBMS_OUTPUT.PUT_LINE('Assets on hand at '||name_in||': '||busyBank);
+   CLOSE busy_bank_cursor;
+END;
+/
+exec BusiestBank('Fishers');
+
+
+
+
+
+create unique index BI$BankerFirstName on BANKER_INFO(BankerID, BankerFirstName);
+DROP SEQUENCE SeqBankerID;
+CREATE SEQUENCE SeqBankerID
+MINVALUE 5500
+START WITH 5500 
+INCREMENT BY 14;
+insert into BANKER_INFO values(SeqBankerID.nextval, 'Jerry' , 'Thomas', 'jthomas1@gmail.com', 10); 
+insert into BANKER_INFO values(SeqBankerID.nextval, 'Emanuel' , 'Kim', 'EKIM@hotmail.net',20);
+insert into BANKER_INFO values(SeqBankerID.nextval, 'Wilfred' , 'Nash', 'NashW@netscape.com',20);
+insert into BANKER_INFO values(SeqBankerID.nextval, 'Caleb' , 'Park', 'Cal_Par4454@comcast.net',20);
+insert into BANKER_INFO values(SeqBankerID.nextval, 'Toby' , 'Lucas', 'TLuke@gmail.com',10);
+
+
+
+
+
+
+--6.2
+
+DROP TABLE PERFORMANCE_REVIEW;
+CREATE TABLE PERFORMANCE_REVIEW
+(
+   BankerID int,
+   BankerFirstName varchar(255),
+   BankerLastName varchar(255),
+   BankerReview int,
+   BankerBonus int
+);
+
+
+SET SERVEROUTPUT ON;
+CREATE OR REPLACE PROCEDURE PerformanceReview_Proc IS
+
+
+   aBankerID int;
+   aBankerFirst varchar(255);
+   aBankerLast varchar(255);
+   Employee_Review_Number int;   --A var for the performanceReview
+   Employee_Bonus_Amt int;   --A var for the bonus
+
+   CURSOR employee_info_cur IS
+   SELECT BANKERID, BANKERFIRSTNAME, BANKERLASTNAME
+   FROM BANKER_INFO;
+
+BEGIN
+  OPEN employee_info_cur;
+  LOOP
+    FETCH employee_info_cur INTO aBankerID, aBankerFirst, aBankerLast; 
+    Employee_Review_Number := dbms_random.value(1,3);
+          
+    IF Employee_Review_Number = 1 THEN
+      Employee_Bonus_Amt := 100;
+      INSERT INTO PERFORMANCE_REVIEW VALUES(aBankerID, aBankerFirst, aBankerLast, Employee_Review_Number, Employee_Bonus_Amt);
+    ELSIF Employee_Review_Number = 2 THEN
+      Employee_Bonus_Amt := 200;
+      INSERT INTO PERFORMANCE_REVIEW VALUES(aBankerID, aBankerFirst, aBankerLast, Employee_Review_Number, Employee_Bonus_Amt);
+    ELSE 
+      Employee_Bonus_Amt := 300;
+      INSERT INTO PERFORMANCE_REVIEW VALUES(aBankerID, aBankerFirst, aBankerLast, Employee_Review_Number, Employee_Bonus_Amt);
+    END IF;
+    EXIT WHEN employee_info_cur%NOTFOUND;
+   END LOOP;
+   CLOSE employee_info_cur;
+END;
+/	
+
+exec PerformanceReview_Proc;
+--View the PERFORMANCE_REVIEW TABLE
+--------------------------------------------------------------------------
+--7. Have at least one package.
+
+
+CREATE OR REPLACE PACKAGE Final_Project_Package 
+AS  
+  FUNCTION Function_BranchCount(branch_name IN VARCHAR2)RETURN NUMBER ;
+  PROCEDURE Procedure_BusiestBank(name_in IN VARCHAR2);
+END Final_Project_Package;
+/
+
+CREATE OR REPLACE PACKAGE BODY Final_Project_Package AS
+  FUNCTION Function_BranchCount(branch_name IN varchar2) 
+  RETURN NUMBER 
+  IS
+        cnumber number;
+        cursor c1 is
+        SELECT COUNT(BRANCHLOCATION)
+        FROM BRANCH
+        WHERE BRANCHLOCATION = branch_name;
+      
+      BEGIN
+        open c1;
+        fetch c1 into cnumber;
+        
+        if c1%notfound then
+          cnumber := 0;
+        end if;
+        close c1;
+      
+      RETURN cnumber;
+END Function_BranchCount;
+      
+      PROCEDURE Procedure_BusiestBank (name_in IN VARCHAR2) IS
+         busyBank VARCHAR(50);
+      
+         CURSOR busy_bank_cursor IS
+         SELECT ASSETS FROM BRANCH
+         WHERE BRANCHLOCATION = name_in;
+      
+      BEGIN
+         OPEN busy_bank_cursor;
+         FETCH busy_bank_cursor INTO busyBank;
+         DBMS_OUTPUT.PUT_LINE('Assets on hand at '||name_in||': '||busyBank);
+         CLOSE busy_bank_cursor;
+      END Procedure_BusiestBank;
+
+END;
+/
+SET SERVEROUTPUT ON;
+BEGIN
+  dbms_output.put_line(Final_Project_Package.Function_BranchCount('Fishers'));
+  Final_Project_Package.Procedure_BusiestBank('Fishers');
+END;
+/
+----------------------------------------------------------------------------------------------------
+--8.1
+
+DROP TABLE EMPLOYEE_CONTACT_INFO;
+DROP TYPE PHONES_NT;
+drop type PHONES_TY;
+
+create or replace type PHONES_TY as object
+(
+	Home VARCHAR(12),
+	Cell VARCHAR(12)
+);
+
+create type PHONES_NT as table of PHONES_TY; 
+
+DROP TABLE EMPLOYEE_CONTACT_INFO;
+CREATE TABLE EMPLOYEE_CONTACT_INFO
+(
+	firstName varchar (30),
+	lastName varchar (30),
+	email varchar(30),
+	PhoneNumbers PHONES_NT
+)
+nested table PhoneNumbers store as PHONES_NT_TAB;
+
+--Cursor loop to get the first name, last name, and email into employee info.
+DECLARE 
+   eFirst VARCHAR(20);
+   eLast VARCHAR(20);
+   eEmail VARCHAR(30);
+
+   cursor Emp_Info_cur is
+   SELECT BANKERFIRSTNAME, BANKERLASTNAME, BANKEREMAIL
+   FROM BANKER_INFO;
+BEGIN
+   OPEN Emp_Info_cur;
+     LOOP
+     FETCH Emp_Info_cur INTO eFirst, eLast, eEmail;
+     INSERT INTO EMPLOYEE_CONTACT_INFO VALUES(eFirst, eLast, eEmail,Phones_NT(Phones_TY('','')));
+     EXIT WHEN Emp_Info_cur%NOTFOUND;
+   END LOOP;
+   CLOSE Emp_Info_cur;
+END;
+/
+
+select FIRSTNAME, LASTNAME, N.*
+from EMPLOYEE_CONTACT_INFO, TABLE(EMPLOYEE_CONTACT_INFO.PhoneNumbers) N;
+
+
+update TABLE(select PhoneNumbers
+		   from EMPLOYEE_CONTACT_INFO
+		   where firstName = 'Jerry') N
+       set N.Home = '333-555-3432';
+       
+
+select FIRSTNAME, LASTNAME, N.*
+from EMPLOYEE_CONTACT_INFO, TABLE(EMPLOYEE_CONTACT_INFO.PhoneNumbers) N;
+
+
+--8.2
+drop table EMPLOYEE_SKILLS;
+drop type WORKER_SKILLS_VA;
+
+create type WORKER_SKILLS_VA as varray(5) of VARCHAR2(10);
+--Create a table that contains the 
+drop table EMPLOYEE_SKILLS;
+create table EMPLOYEE_SKILLS
+(
+	firstName varchar (30),
+	lastName varchar (30),
+	Skills WORKER_SKILLS_VA
+);
+
+
+DECLARE 
+   eFirst VARCHAR(20);
+   eLast VARCHAR(20);
+
+   cursor Emp_Info_cur is
+   SELECT BANKERFIRSTNAME, BANKERLASTNAME
+   FROM BANKER_INFO;
+BEGIN
+   OPEN Emp_Info_cur;
+     LOOP
+     FETCH Emp_Info_cur INTO eFirst, eLast;
+     INSERT INTO EMPLOYEE_SKILLS VALUES(eFirst, eLast,WORKER_SKILLS_VA());
+     EXIT WHEN Emp_Info_cur%NOTFOUND;
+   END LOOP;
+   CLOSE Emp_Info_cur;
+END;
+/
+
+Select firstName, N.*
+from EMPLOYEE_SKILLS , Table(Skills) N;
+
+
+UPDATE EMPLOYEE_SKILLS
+SET Skills = WORKER_SKILLS_VA ('Education', 'Integrity', 'Punctual')
+WHERE firstName = 'Jerry';
+
+UPDATE EMPLOYEE_SKILLS
+SET Skills = WORKER_SKILLS_VA ('Education', 'Experience')
+WHERE firstName = 'Caleb';
+
+Select firstName, N.*
+from EMPLOYEE_SKILLS , Table(Skills) N;

@@ -1,0 +1,345 @@
+DROP TABLE CREDIT_CARD;
+CREATE TABLE CREDIT_CARD
+(
+CreditCardNumber number(16,0), CONSTRAINT CreditCardNumber CHECK (CreditCardNumber > 999999999999999),
+CreditCardLimit varchar(255), CHECK (CreditCardLimit >= 500),
+CustomerId int
+);
+Insert into CREDIT_CARD values (5536659067699681,'500',556);
+Insert into CREDIT_CARD values (5536659067699681,'1500',577);
+Insert into CREDIT_CARD values (5418598337016271,'10000',640);
+Insert into CREDIT_CARD values (5373320601169964,'50000',661);
+Insert into CREDIT_CARD values (6011254818112630,'6000',724);
+Insert into CREDIT_CARD values (6011405901450887,'900',745);
+Insert into CREDIT_CARD values (4556649532162538,'3300',808);
+Insert into CREDIT_CARD values (4532242334971949,'5500',829);
+Insert into CREDIT_CARD values (5184661953716038,'7500',892);
+Insert into CREDIT_CARD values (6011695623836062,'7450',913);
+Insert into CREDIT_CARD values (4556834587489073,'4625',577);
+Insert into CREDIT_CARD values (4556754781945177,'9000',640);
+Insert into CREDIT_CARD values (5223293107414360,'12000',661);
+Insert into CREDIT_CARD values (6011956844573649,'550',892);
+Insert into CREDIT_CARD values (5250335443644204,'15000',661);
+-------------------------------------------------------------------------------------------------
+DROP TABLE BANKER_INFO;
+CREATE TABLE BANKER_INFO
+(
+BankerID int PRIMARY KEY,
+BankerFirstName varchar(255),
+BankerLastName varchar (255),
+BankerEmail varchar(255),
+BankerBranchNumber smallint
+);
+create unique index BI$BankerFirstName on BANKER_INFO(BankerID, BankerFirstName);
+DROP SEQUENCE SeqBankerID;
+CREATE SEQUENCE SeqBankerID
+MINVALUE 5500
+START WITH 5500 
+INCREMENT BY 14;
+insert into BANKER_INFO values(SeqBankerID.nextval, 'Jerry' , 'Thomas', 'jthomas1@gmail.com', 10); 
+insert into BANKER_INFO values(SeqBankerID.nextval, 'Emanuel' , 'Kim', 'EKIM@hotmail.net',20);
+insert into BANKER_INFO values(SeqBankerID.nextval, 'Wilfred' , 'Nash', 'NashW@netscape.com',20);
+insert into BANKER_INFO values(SeqBankerID.nextval, 'Caleb' , 'Park', 'Cal_Par4454@comcast.net',20);
+insert into BANKER_INFO values(SeqBankerID.nextval, 'Toby' , 'Lucas', 'TLuke@gmail.com',10);
+-------------------------------------------------------------------------------------------------
+
+DROP TABLE BRANCH;
+CREATE TABLE BRANCH
+(
+BranchNumber varchar(255) PRIMARY KEY,
+Assets decimal(20,2),
+--Assets varchar(255), CHECK (Assets >= 10000), --20 in front of the decimal 2 behind.
+BranchLocation varchar(255)
+);
+DROP SEQUENCE SeqBranchNumber;
+CREATE SEQUENCE SeqBranchNumber
+MINVALUE 10
+START WITH 10 
+INCREMENT BY 10;
+
+INSERT into BRANCH values (SeqBranchNumber.nextval, 2153764.59, 'Fishers');
+INSERT into BRANCH values (SeqBranchNumber.nextval, 2467216.14, 'Noblesville');
+-------------------------------------------------------------------------------------------------
+
+DROP TABLE LOAN;
+CREATE TABLE LOAN
+( 
+LoanId int PRIMARY KEY,
+Amount int,
+CustomerID int,
+BranchNo smallint
+);
+DROP SEQUENCE SeqLoanNumber;
+CREATE SEQUENCE SeqLoanNumber
+MINVALUE 66458
+START WITH 66458
+INCREMENT BY 90;
+
+insert into LOAN values (SeqLoanNumber.nextval, 10000, 535, 10);
+insert into LOAN values (SeqLoanNumber.nextval,2150 ,577, 10);
+insert into LOAN values (SeqLoanNumber.nextval,6645 ,619, 20);
+insert into LOAN values (SeqLoanNumber.nextval, 12000, 661,20 );
+insert into LOAN values (SeqLoanNumber.nextval, 900, 703, 20);
+insert into LOAN values (SeqLoanNumber.nextval, 150000, 745, 10);
+insert into LOAN values (SeqLoanNumber.nextval, 1550,787 , 10);
+insert into LOAN values (SeqLoanNumber.nextval, 250000, 829, 20);
+insert into LOAN values (SeqLoanNumber.nextval, 3550,871 , 20);
+insert into LOAN values (SeqLoanNumber.nextval, 60000, 913, 10);
+insert into LOAN values (SeqLoanNumber.nextval, 80500, 577, 10);
+insert into LOAN values (SeqLoanNumber.nextval, 76000, 619, 10);
+-------------------------------------------------------------------------------------------------
+DROP TABLE ACCOUNTS;
+CREATE TABLE ACCOUNTS
+(
+AccountNumber int PRIMARY KEY,
+Balance decimal(20,2),
+AccountType varchar(10),
+CustomerID int
+);
+DROP SEQUENCE SeqAccountId;
+CREATE SEQUENCE SeqAccountId
+START WITH 900000000
+INCREMENT BY 150;
+insert into ACCOUNTS values(SeqAccountId.nextval, 1255.84, 'Checking', 535);
+insert into ACCOUNTS values(SeqAccountId.nextval,2151.23,'Checking',556);
+insert into ACCOUNTS values(SeqAccountId.nextval,33634.56,'Savings',557);
+insert into ACCOUNTS values(SeqAccountId.nextval,2457.24,'Checking',598);
+insert into ACCOUNTS values(SeqAccountId.nextval,32622.50,'Savings',619);
+insert into ACCOUNTS values(SeqAccountId.nextval,5181.11,'Savings',640);
+insert into ACCOUNTS values(SeqAccountId.nextval,7.82,'Checking',661);
+insert into ACCOUNTS values(SeqAccountId.nextval,550.64,'Checking',682);
+insert into ACCOUNTS values(SeqAccountId.nextval,1908.12,'Savings',703);
+insert into ACCOUNTS values(SeqAccountId.nextval,2.26,'Savings',724);
+insert into ACCOUNTS values(SeqAccountId.nextval,-44.25,'Checking',745);
+insert into ACCOUNTS values(SeqAccountId.nextval,-2.35,'Savings',766);
+insert into ACCOUNTS values(SeqAccountId.nextval,5500.24,'Savings',787);
+insert into ACCOUNTS values(SeqAccountId.nextval,6802.91,'Checking',808);
+insert into ACCOUNTS values(SeqAccountId.nextval,628.17,'Checking',829);
+insert into ACCOUNTS values(SeqAccountId.nextval,-30.55,'Checking',850);
+insert into ACCOUNTS values(SeqAccountId.nextval,120065.50,'Savings',871);
+insert into ACCOUNTS values(SeqAccountId.nextval,66.59,'Savings',892);
+insert into ACCOUNTS values(SeqAccountId.nextval,5352.29,'Savings',913);
+insert into ACCOUNTS values(SeqAccountId.nextval,495.70,'Checking',934);
+insert into ACCOUNTS values(SeqAccountId.nextval,99.50,'Savings',535);
+insert into ACCOUNTS values(SeqAccountId.nextval,4658.05,'Savings',556);
+insert into ACCOUNTS values(SeqAccountId.nextval,745.26,'Checking',577);
+insert into ACCOUNTS values(SeqAccountId.nextval,969.20,'Savings',598);
+insert into ACCOUNTS values(SeqAccountId.nextval,-120.20,'Checking',619);
+insert into ACCOUNTS values(SeqAccountId.nextval,4760.02,'Savings',640);
+insert into ACCOUNTS values(SeqAccountId.nextval,12051.21,'Savings',766);
+insert into ACCOUNTS values(SeqAccountId.nextval,-0.02,'Checking',850);
+insert into ACCOUNTS values(SeqAccountId.nextval,0.03,'Checking',619);
+insert into ACCOUNTS values(SeqAccountId.nextval,35.00,'Savings',892);
+insert into ACCOUNTS values(SeqAccountId.nextval,565.56,'Savings',934);
+insert into ACCOUNTS values(SeqAccountId.nextval,30189.15,'Savings',703);
+insert into ACCOUNTS values(SeqAccountId.nextval,150.89,'Savings',808);
+insert into ACCOUNTS values(SeqAccountId.nextval,645.05,'Checking',556);
+insert into ACCOUNTS values(SeqAccountId.nextval,-22.81,'Savings',892);
+-------------------------------------------------------------------------------------------------
+
+DROP TABLE CUSTOMER;
+CREATE TABLE CUSTOMER
+(
+CustomerId int PRIMARY KEY,
+FirstName varchar(255) NOT NULL,
+LastName varchar(255) NOT NULL,
+BankerID int,
+Join_Date DATE,
+CONSTRAINT CustomerId UNIQUE(CustomerId, FirstName)
+);
+DROP SEQUENCE SeqCustomerID;
+CREATE SEQUENCE SeqCustomerID
+START WITH 535 
+INCREMENT BY 21;
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Phillip' , 'Hall',5500, '04-MAY-1992');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Kimberly' , 'Adams',5514,'18-SEP-1961');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Sharon' , 'Coleman',5528, '16-MAY-1963');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Marilyn' , 'Martin',5542,'18-MAY-1962');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Michael' , 'Taylor',5556,'25-MAY-1965');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Margaret' , 'Allen',5514,'30-SEP-1968');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Adam' , 'Flores' ,5500, '25-JAN-1993');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Steve' , 'Bennett',5500, '25-AUG-1993');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Jerry' , 'Carter',5556, '5-JUL-1994');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Christine' , 'Alexander',5542, '15-MAY-1997');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Douglas' , 'James',5556, '18-JAN-1998');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Donna' , 'Mitchell',5556,'2-FEB-1975');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Amanda' , 'Moore',5514,'13-APR-1983');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Laura' , 'Morgan',5528, '8-JAN-2004');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Stephanie' , 'Evans',5514, '23-MAY-1978');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Jerry' , 'Reed',5500, '28-OCT-1981');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Nicholas' , 'Hill',5542, '7-MAY-1995');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Jane' , 'Hall',5500, '18-OCT-1993');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Timothy' , 'Garcia',5556, '26-MAR-1997');
+insert into CUSTOMER values(SeqCustomerID.nextval, 'Earl' , 'Sanders',5542, '25-SEP-1983');
+
+-------------------------------------------------------------------------------------------------
+
+
+-------------------DEMONSTRATE SAVEPOINTS-------------------------------------	
+SAVEPOINT A;
+
+-----------------CREATE 5 VIEWS:-----------------------------------------------------------------
+
+--A view to show 'preferred customers', those who have credit card limits over 10,000--
+--This uses 1/2 join clauses (inner join)
+
+DROP VIEW PREFERRED_MEMBER;
+CREATE VIEW PREFERRED_MEMBER AS
+SELECT DISTINCT(CUSTOMER.FIRSTNAME),(CUSTOMER.LASTNAME)
+FROM CUSTOMER
+INNER JOIN CREDIT_CARD ON CUSTOMER.CUSTOMERID=CREDIT_CARD.CUSTOMERID
+WHERE CREDIT_CARD.CREDITCARDLIMIT >= 10000;
+
+--A view to show Overdrawn Accounts, that uses the ORDER BY clause
+DROP VIEW OVERDRAWN_ACCOUNT;
+CREATE  VIEW "OVERDRAWN_ACCOUNT"  AS 
+SELECT DISTINCT(CUSTOMER.LASTNAME), (CUSTOMER.FIRSTNAME), (ACCOUNTS.BALANCE),(ACCOUNTS.ACCOUNTTYPE)
+FROM CUSTOMER
+INNER JOIN ACCOUNTS ON CUSTOMER.CUSTOMERID=ACCOUNTS.CUSTOMERID
+WHERE ACCOUNTS.BALANCE <0
+ORDER BY CUSTOMER.LASTNAME;
+
+
+--A simple view to show Checking Accounts
+DROP VIEW CHECKING_ACCOUNTS;
+CREATE VIEW "CHECKING_ACCOUNTS" AS
+SELECT DISTINCT (CUSTOMER.LASTNAME), (CUSTOMER.FIRSTNAME), (ACCOUNTS.ACCOUNTTYPE)
+FROM CUSTOMER
+INNER JOIN ACCOUNTS ON CUSTOMER.CUSTOMERID=ACCOUNTS.CUSTOMERID
+WHERE ACCOUNTS.ACCOUNTTYPE='CHECKING'
+ORDER BY CUSTOMER.LASTNAME;
+
+--A view to show Savings Accounts
+DROP VIEW SAVINGS_ACCOUNTS;
+CREATE VIEW "SAVINGS_ACCOUNTS" AS
+SELECT DISTINCT (CUSTOMER.LASTNAME), (CUSTOMER.FIRSTNAME), (ACCOUNTS.ACCOUNTTYPE)
+FROM CUSTOMER
+INNER JOIN ACCOUNTS ON CUSTOMER.CUSTOMERID=ACCOUNTS.CUSTOMERID
+WHERE ACCOUNTS.ACCOUNTTYPE='Savings'
+ORDER BY CUSTOMER.LASTNAME;
+
+--A view to show Members who have been with the bank for over 25 years
+--This uses the "Months Between" Date Function (1/2)
+DROP VIEW "LIFETIME_MEMBERS";
+CREATE VIEW "LIFETIME_MEMBERS" AS
+SELECT DISTINCT (CUSTOMER.LASTNAME), (CUSTOMER.FIRSTNAME), FLOOR(MONTHS_BETWEEN(SYSDATE, JOIN_DATE)/12) AS "YEARS WITH bank"
+FROM CUSTOMER
+WHERE (CURRENT_DATE-CUSTOMER.JOIN_DATE)/365>25
+ORDER BY LASTNAME;
+
+--------------Use at least two of the string functions-------------------------
+--Formats the Credit Card Limit to be not so close to the table
+select LPAD(CreditCardLimit,7) CreditCardNumber
+FROM CREDIT_CARD;
+
+--Returns the Last 4 of Credit card with matching Customer ID
+SELECT SUBSTR(CREDITCARDNUMBER,13,4) AS CCN, CUSTOMERID
+FROM CREDIT_CARD;
+
+----------------------Use at least two of the number functions-----------------------
+--Use the Sum function to get the total amount of assets in the bank 
+SELECT SUM(ASSETS)AS TOTAL_HOLDINGS
+FROM BRANCH;
+
+--Get the average of the amount of money in all accounts
+
+SELECT ROUND(AVG(BALANCE),2)
+FROM ACCOUNTS;
+--------Use two of the date functions------
+
+--See the MONTHS_BETWEEN function above
+
+--Change the format of the
+SELECT to_char(JOIN_DATE, 'mm/dd/yyyy')
+from CUSTOMER;
+
+-------------Use DECODE to generate a report of wether or not accounts are in good standings (overdrawn)-----
+
+select CUSTOMERID, DECODE(SIGN(BALANCE), 1, 'Good Standing', -1 ,'Issue Notice')AS BALANCE_STANDING
+FROM ACCOUNTS
+ORDER BY CUSTOMERID;
+
+-------Use the Group By and Having Clause------------
+---The purpose of this query is to show those clients who have more than one loan with the bank
+SELECT CUSTOMER.LASTNAME, COUNT(LOAN.CUSTOMERID) AS NUMBER_OF_LOANS
+FROM (CUSTOMER INNER JOIN LOAN
+ON LOAN.CUSTOMERID=CUSTOMER.CUSTOMERID)
+GROUP BY CUSTOMER.LASTNAME
+HAVING COUNT(LOAN.CUSTOMERID)>1;
+
+----Use Sub Queries-----------------------------------
+/* The purpose of this subquery is to show
+how to specify other details to
+efficiently search when all information
+may not be provided*/
+SELECT ASSETS
+FROM BRANCH
+WHERE BRANCHLOCATION IN(SELECT
+BRANCHLOCATION
+FROM BRANCH
+WHERE BRANCHLOCATION = 'Fishers');
+----------Use Inner join and Outer Join-------
+--For inner, see above.
+
+/*Outer Join. The purpose of this query is to join everything from two different tables in order to generate
+the email address for the Customers to use*/
+SELECT LASTNAME, FIRSTNAME, BANKEREMAIL
+FROM CUSTOMER 
+FULL OUTER JOIN BANKER_INFO
+ON CUSTOMER.BANKERID=BANKER_INFO.BANKERID;
+
+-------Use Insert All and Insert First-----------------------------------
+--Insert All
+
+DROP TABLE BANKER_WORKPLACE;
+CREATE TABLE BANKER_WORKPLACE
+(
+BankerID int,
+BankerFirstName varchar(255),
+BankerLastName varchar (255),
+BankerEmail varchar(255),
+BankerBranch varchar(255)
+);
+
+INSERT ALL
+	into BANKER_WORKPLACE (BankerID, BankerFirstName, BankerLastName, BankerEmail, BankerBranch)
+	values (BankerID, BankerFirstName, BankerLastName, BankerEmail, 'Fishers Location')
+select BankerID, BankerFirstName, BankerLastName, BankerEmail, BankerBranchNumber
+from BANKER_INFO
+where BankerBranchNumber = '20';
+--Insert First
+DELETE FROM BANKER_WORKPLACE;
+
+INSERT FIRST
+  when BankerBranchNumber='20' then
+    into BANKER_WORKPLACE(BankerID, BankerFirstName, BankerLastName, BANKEREMAIL, BankerBranch)
+    values (BankerID, BankerFirstName, BankerLastName, BankerEmail, 'Fishers Location')
+  when BankerBranchNumber='10' then
+    into BANKER_WORKPLACE(BankerID, BankerFirstName, BankerLastName, BANKEREMAIL, BankerBranch)
+    values (BankerID, BankerFirstName, BankerLastName, BankerEmail, 'Castleton Location')
+  else
+    into BANKER_WORKPLACE
+  select BankerID, BankerFirstName, BankerLastName, BankerEmail, BankerBranchNumber
+  FROM BANKER_INFO
+  WHERE BankerID LIKE '5%';
+  
+------------------------Use Merge------------------------------------ 
+
+DROP TABLE ACCOUNT2;
+CREATE TABLE ACCOUNT2
+(
+Balance decimal(20,2),
+CustomerID int
+);
+insert into ACCOUNT2 values(55.25, 535);
+  
+MERGE INTO ACCOUNTS TGT
+USING (SELECT CUSTOMERID, BALANCE FROM ACCOUNT2) SRC
+ON (TGT.CustomerID = SRC.CustomerID)
+WHEN MATCHED THEN
+	UPDATE SET TGT.BALANCE = SRC.BALANCE
+WHEN NOT MATCHED THEN
+  INSERT (TGT.BALANCE, TGT.CUSTOMERID) VALUES (SRC.BALANCE, SRC.CUSTOMERID);
+
+-----------Savepoint Rollback----------------
+rollback to savepoint A;
